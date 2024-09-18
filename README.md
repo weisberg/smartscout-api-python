@@ -22,11 +22,11 @@ pip install smartscout-api
 Here's a quick example of how to use the SmartScout API client:
 
 ```python
-from smartscout import SmartScoutClient
+from smartscout import SmartScoutAPIClient
 from smartscout.models import SearchProductsRequest, MarketplaceId
 
 # Initialize the client with your API key
-client = SmartScoutClient(api_key="your_api_key_here")
+client = SmartScoutAPIClient(api_key="your_api_key_here")
 
 # Create a request to search for products
 request = SearchProductsRequest(
@@ -51,7 +51,7 @@ while response.paging.has_more_records:
 
 ## Available Methods
 
-The `SmartScoutClient` provides methods for all SmartScout API endpoints, including:
+The `SmartScoutAPIClient` provides methods for all SmartScout API endpoints, including:
 
 - `search_brands()`
 - `search_products()`

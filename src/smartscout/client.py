@@ -35,7 +35,7 @@ from .exceptions import SmartScoutAPIError, RateLimitError, AuthenticationError
 
 T = TypeVar('T', bound=BaseResponse)
 
-class SmartScoutClient:
+class SmartScoutAPIClient:
     """
     A client for interacting with the SmartScout API.
     """
@@ -166,7 +166,7 @@ class SmartScoutClient:
 
 # Example usage
 if __name__ == "__main__":
-    client = SmartScoutClient(api_key="your_api_key_here")
+    client = SmartScoutAPIClient(api_key="your_api_key_here")
     
     # Search for brands
     brand_request = SearchBrandsRequest(marketplace=MarketplaceId.US, brand_name="Example Brand")
