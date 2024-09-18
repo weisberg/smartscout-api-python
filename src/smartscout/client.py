@@ -3,6 +3,7 @@
 import requests
 from typing import Dict, Any, Type, TypeVar, Generic
 from .models.base import BaseRequest, BaseResponse, PagedResponse
+
 from .models.enums import MarketplaceId
 from .models.requests import (
     SearchBrandsRequest,
@@ -18,18 +19,24 @@ from .models.requests import (
     GetBrandScopeRequest,
     GetBrandScopeTopProductsRequest,
     GetRelevantSearchTermsRequest,
-    GetSearchTermHistoryRequest,
+    GetSearchTermHistoryRequest
 )
 from .models.responses import (
     Brand,
     Product,
-    SearchTerm,
     Seller,
+    SearchTerm,
     BrandSalesHistory,
     ProductSalesHistory,
     SellerPerformance,
     CategoryTrend,
     CompetitorAnalysis,
+    BrandPagedResponse,
+    ProductPagedResponse,
+    SellerPagedResponse,
+    SearchTermPagedResponse,
+    # Remove OrganicRank if it's not defined in responses.py
+    # OrganicRank,
 )
 from .exceptions import SmartScoutAPIError, RateLimitError, AuthenticationError
 
