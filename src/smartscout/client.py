@@ -102,9 +102,75 @@ class SmartScoutAPIClient:
         """
         return self._paged_request("/brands/search", request, Brand, verbose=verbose)
 
-    def search_products(self, request: SearchProductsRequest, verbose: bool = False) -> PagedResponse[Product]:
+    def search_products(
+        self, 
+        request: SearchProductsRequest, 
+        verbose: bool = False
+    ) -> PagedResponse[Product]:
         """
-        Search for products based on the given criteria.
+        Search for products based on specified criteria.
+
+        This method allows users to search for products within the SmartScout database by providing various filtering criteria encapsulated
+        within a `SearchProductsRequest` object. The search results are returned in a paginated format, facilitating efficient data retrieval.
+
+        Args:
+            request (SearchProductsRequest): 
+                An instance of `SearchProductsRequest` containing the search parameters. This may include filters such as 
+                marketplace ID, brand name, category, price range, and other relevant product attributes.
+            
+            verbose (bool, optional): 
+                If set to `True`, the method will output detailed information about the API request being made, including the 
+                constructed CURL command for debugging purposes. Defaults to `False`.
+
+        Returns:
+            PagedResponse[Product]: 
+                A `PagedResponse` object containing a list of `Product` instances that match the search criteria. It also includes 
+                pagination metadata such as total results, page number, and page size.
+
+        Raises:
+            SmartScoutAPIError:
+                Raised when an unexpected error occurs during the API request that is not related to rate limiting or authentication.
+            
+            RateLimitError:
+                Raised when the API rate limit has been exceeded. Users should implement retry logic with exponential backoff in this case.
+            
+            AuthenticationError:
+                Raised when the provided API key is invalid or has insufficient permissions to perform the search operation.
+
+        Example:
+            ```python
+            from smartscout.client import SmartScoutAPIClient
+            from smartscout.models.requests import SearchProductsRequest
+            from smartscout.models.enums import MarketplaceId
+
+            # Initialize the API client with your API key
+            client = SmartScoutAPIClient(api_key="your_api_key_here")
+
+            # Create a search request with desired criteria
+            product_request = SearchProductsRequest(
+                marketplace=MarketplaceId.US,
+                brand_name="Example Brand",
+                category="Electronics",
+                price_min=50.00,
+                price_max=500.00
+            )
+
+            # Perform the product search with verbose output
+            try:
+                product_response = client.search_products(product_request, verbose=True)
+                for product in product_response.data:
+                    print(f"ASIN: {product.asin}, Title: {product.title}, Price: ${product.price}")
+            except AuthenticationError:
+                print("Invalid API key provided.")
+            except RateLimitError:
+                print("Rate limit exceeded. Please try again later.")
+            except SmartScoutAPIError as e:
+                print(f"An error occurred: {e}")
+            ```
+
+        Notes:
+            - Ensure that the `SearchProductsRequest` is populated with all necessary fields to obtain accurate and relevant search results.
+            - When `verbose` is enabled, sensitive information such as API keys will appear in the output. Use this feature primarily for debugging purposes in a secure environment.
         """
         return self._paged_request("/products/search", request, Product, verbose=verbose)
 
