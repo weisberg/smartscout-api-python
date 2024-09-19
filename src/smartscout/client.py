@@ -58,11 +58,22 @@ class SmartScoutAPIClient:
             "Accept": "application/json"
         })
 
-    def _make_request(self, method: str, endpoint: str, data: Dict[str, Any] = None, params: Dict[str, Any] = None) -> Dict[str, Any]:
+    def _make_request(self, method: str, endpoint: str, data: Dict[str, Any] = None, params: Dict[str, Any] = None, verbose: bool = False) -> Dict[str, Any]:
         """
         Make a request to the SmartScout API.
         """
         url = f"{self.BASE_URL}{endpoint}"
+        
+        if verbose:
+            curl_command = f"curl -X {method.upper()} '{url}'"
+            for header, value in self.session.headers.items():
+                curl_command += f" -H '{header}: {value}'"
+            if data:
+                curl_command += f" -d '{json.dumps(data)}'"
+            if params:
+                curl_command += f" -G {' '.join([f'-d {k}={shlex.quote(str(v))}' for k, v in params.items()])}"
+            print(f"CURL command:\n{curl_command}")
+
         try:
             response = self.session.request(method, url, json=data, params=params)
             response.raise_for_status()
@@ -77,103 +88,111 @@ class SmartScoutAPIClient:
         except requests.exceptions.RequestException as e:
             raise SmartScoutAPIError(f"An error occurred: {e}")
 
-    def _paged_request(self, endpoint: str, request: BaseRequest, response_model: Type[T]) -> PagedResponse[T]:
+    def _paged_request(self, endpoint: str, request: BaseRequest, response_model: Type[T], verbose: bool = False) -> PagedResponse[T]:
         """
         Make a paged request to the SmartScout API.
         """
         data = request.dict(exclude_none=True)
-        response_data = self._make_request("POST", endpoint, data=data)
+        response_data = self._make_request("POST", endpoint, data=data, verbose=verbose)
         return PagedResponse[response_model](**response_data)
 
-    def search_brands(self, request: SearchBrandsRequest) -> PagedResponse[Brand]:
+    def search_brands(self, request: SearchBrandsRequest, verbose: bool = False) -> PagedResponse[Brand]:
         """
         Search for brands based on the given criteria.
         """
-        return self._paged_request("/brands/search", request, Brand)
+        return self._paged_request("/brands/search", request, Brand, verbose=verbose)
 
-    def search_products(self, request: SearchProductsRequest) -> PagedResponse[Product]:
+    def search_products(self, request: SearchProductsRequest, verbose: bool = False) -> PagedResponse[Product]:
         """
         Search for products based on the given criteria.
         """
-        return self._paged_request("/products/search", request, Product)
+        return self._paged_request("/products/search", request, Product, verbose=verbose)
 
-    def search_search_terms(self, request: SearchSearchTermsRequest) -> PagedResponse[SearchTerm]:
+    def search_search_terms(self, request: SearchSearchTermsRequest, verbose: bool = False) -> PagedResponse[SearchTerm]:
         """
         Search for search terms based on the given criteria.
         """
-        return self._paged_request("/search-terms/search", request, SearchTerm)
+        return self._paged_request("/search-terms/search", request, SearchTerm, verbose=verbose)
 
-    def search_sellers(self, request: SearchSellersRequest) -> PagedResponse[Seller]:
+    def search_sellers(self, request: SearchSellersRequest, verbose: bool = False) -> PagedResponse[Seller]:
         """
         Search for sellers based on the given criteria.
         """
-        return self._paged_request("/sellers/search", request, Seller)
+        return self._paged_request("/sellers/search", request, Seller, verbose=verbose)
 
-    def get_organic_ranks(self, request: GetOrganicRanksRequest) -> PagedResponse[Product]:
+    def get_organic_ranks(self, request: GetOrganicRanksRequest, verbose: bool = False) -> PagedResponse[Product]:
         """
         Get organic ranks for products based on the given criteria.
         """
-        return self._paged_request("/products/organic-ranks", request, Product)
+        return self._paged_request("/products/organic-ranks", request, Product, verbose=verbose)
 
-    def get_product_history_scope(self, request: GetProductHistoryScopeRequest) -> PagedResponse[ProductSalesHistory]:
+    def get_product_history_scope(self, request: GetProductHistoryScopeRequest, verbose: bool = False) -> PagedResponse[ProductSalesHistory]:
         """
         Get product history scope based on the given criteria.
         """
-        return self._paged_request("/products/history/scope", request, ProductSalesHistory)
+        return self._paged_request("/products/history/scope", request, ProductSalesHistory, verbose=verbose)
 
-    def get_relevant_products(self, request: GetRelevantProductsRequest) -> PagedResponse[Product]:
+    def get_relevant_products(self, request: GetRelevantProductsRequest, verbose: bool = False) -> PagedResponse[Product]:
         """
         Get relevant products based on the given criteria.
         """
-        return self._paged_request("/products/relevant", request, Product)
+        return self._paged_request("/products/relevant", request, Product, verbose=verbose)
 
-    def get_subcategory_brands(self, request: GetSubcategoryBrandsRequest) -> PagedResponse[Brand]:
+    def get_subcategory_brands(self, request: GetSubcategoryBrandsRequest, verbose: bool = False) -> PagedResponse[Brand]:
         """
         Get brands in a subcategory based on the given criteria.
         """
-        return self._paged_request("/subcategories/brands", request, Brand)
+        return self._paged_request("/subcategories/brands", request, Brand, verbose=verbose)
 
-    def get_brand_sales_history(self, request: GetBrandSalesHistoryRequest) -> PagedResponse[BrandSalesHistory]:
+    def get_brand_sales_history(self, request: GetBrandSalesHistoryRequest, verbose: bool = False) -> PagedResponse[BrandSalesHistory]:
         """
         Get brand sales history based on the given criteria.
         """
-        return self._paged_request("/brands/history/sales", request, BrandSalesHistory)
+        return self._paged_request("/brands/history/sales", request, BrandSalesHistory, verbose=verbose)
 
-    def get_brand_sales_history_by_subcategories(self, request: GetBrandSalesHistoryBySubcategoriesRequest) -> PagedResponse[BrandSalesHistory]:
+    def get_brand_sales_history_by_subcategories(self, request: GetBrandSalesHistoryBySubcategoriesRequest, verbose: bool = False) -> PagedResponse[BrandSalesHistory]:
         """
         Get brand sales history by subcategories based on the given criteria.
         """
-        return self._paged_request("/brands/history/sales-by-subcategories", request, BrandSalesHistory)
+        return self._paged_request("/brands/history/sales-by-subcategories", request, BrandSalesHistory, verbose=verbose)
 
-    def get_brand_scope(self, request: GetBrandScopeRequest) -> PagedResponse[Brand]:
+    def get_brand_scope(self, request: GetBrandScopeRequest, verbose: bool = False) -> PagedResponse[Brand]:
         """
         Get brand scope based on the given criteria.
         """
-        return self._paged_request("/brands/scope", request, Brand)
+        return self._paged_request("/brands/scope", request, Brand, verbose=verbose)
 
-    def get_brand_scope_top_products(self, request: GetBrandScopeTopProductsRequest) -> PagedResponse[Product]:
+    def get_brand_scope_top_products(self, request: GetBrandScopeTopProductsRequest, verbose: bool = False) -> PagedResponse[Product]:
         """
         Get top products in a brand scope based on the given criteria.
         """
-        return self._paged_request("/brands/scope/top-products", request, Product)
+        return self._paged_request("/brands/scope/top-products", request, Product, verbose=verbose)
 
-    def get_relevant_search_terms(self, request: GetRelevantSearchTermsRequest) -> PagedResponse[SearchTerm]:
+    def get_relevant_search_terms(self, request: GetRelevantSearchTermsRequest, verbose: bool = False) -> PagedResponse[SearchTerm]:
         """
         Get relevant search terms based on the given criteria.
         """
-        return self._paged_request("/search-terms/relevant", request, SearchTerm)
+        return self._paged_request("/search-terms/relevant", request, SearchTerm, verbose=verbose)
 
-    def get_search_term_history(self, request: GetSearchTermHistoryRequest) -> PagedResponse[SearchTerm]:
+    def get_search_term_history(self, request: GetSearchTermHistoryRequest, verbose: bool = False) -> PagedResponse[SearchTerm]:
         """
         Get search term history based on the given criteria.
         """
-        return self._paged_request("/search-terms/history", request, SearchTerm)
+        return self._paged_request("/search-terms/history", request, SearchTerm, verbose=verbose)
 
     # Add more methods for other API endpoints as needed
 
 # Example usage
 if __name__ == "__main__":
     client = SmartScoutAPIClient(api_key="your_api_key_here")
+    
+    # Search for brands with verbose output
+    brand_request = SearchBrandsRequest(marketplace=MarketplaceId.US, brand_name="Example Brand")
+    brand_response = client.search_brands(brand_request, verbose=True)
+    brand_response = client.search_brands(brand_request, verbose=True)
+    
+    for brand in brand_response.data:
+        print(f"Brand: {brand.brand_name}, Monthly Revenue: ${brand.monthly_revenue}")
     
     # Search for brands
     brand_request = SearchBrandsRequest(marketplace=MarketplaceId.US, brand_name="Example Brand")

@@ -7,6 +7,7 @@ from .base import BaseSearchRequest, BaseHistoryRequest, RangeDecimal, RangeFilt
 from .enums import ProductCondition, FulfillmentChannel, BrandType, Intent, AdType
 
 class SearchBrandsRequest(BaseSearchRequest):
+    # V2 endpoint: /api/v2/brands/search
     brand_names: Optional[ListFilter] = Field(None, alias="brandNames")
     brand_name: Optional[TextFilter] = Field(None, alias="brandName")
     amazon_isr: Optional[RangeFilter] = Field(None, alias="amazonIsr")
@@ -35,6 +36,7 @@ class SearchBrandsRequest(BaseSearchRequest):
     trailing_12_months: Optional[RangeDecimal] = Field(None, alias="trailing12Months")
 
 class SearchProductsRequest(BaseSearchRequest):
+    # V1 endpoint: /api/v1/products/search
     subcategory_id: Optional[int] = Field(None, alias="subcategoryId")
     brand_name: Optional[TextFilter] = Field(None, alias="brandName")
     category_name: Optional[TextFilter] = Field(None, alias="categoryName")
@@ -60,6 +62,7 @@ class SearchProductsRequest(BaseSearchRequest):
     total_ratings: Optional[RangeInt] = Field(None, alias="totalRatings")
 
 class SearchSearchTermsRequest(BaseSearchRequest):
+    # V1 endpoint: /api/v1/search-terms/search
     search_term_value: Optional[TextFilter] = Field(None, alias="searchTermValue")
     estimate_searches: Optional[RangeInt] = Field(None, alias="estimateSearches")
     brands: Optional[RangeInt] = None
@@ -68,6 +71,7 @@ class SearchSearchTermsRequest(BaseSearchRequest):
     super_charge: Optional[bool] = Field(None, alias="superCharge")
 
 class SearchSellersRequest(BaseSearchRequest):
+    # V1 endpoint: /api/v1/sellers/search
     category_name: Optional[TextFilter] = Field(None, alias="categoryName")
     subcategory_name: Optional[TextFilter] = Field(None, alias="subcategoryName")
     amazon_seller_id: Optional[TextFilter] = Field(None, alias="amazonSellerId")
@@ -100,6 +104,7 @@ class SearchSellersRequest(BaseSearchRequest):
     last_suspended_date: Optional[datetime] = Field(None, alias="lastSuspendedDate")
 
 class GetOrganicRanksRequest(BaseSearchRequest):
+    # V1 endpoint: /api/v1/products/{asin}/organic-ranks
     asin: Optional[str] = None
     exclude_variants: bool = Field(..., alias="excludeVariants")
     include_rank_history: bool = Field(..., alias="includeRankHistory")
@@ -112,34 +117,42 @@ class GetOrganicRanksRequest(BaseSearchRequest):
     estimate_searches: Optional[RangeInt] = Field(None, alias="estimateSearches")
 
 class GetProductHistoryScopeRequest(BaseHistoryRequest):
+    # V1 endpoint: /api/v1/products/{asin}/history/scope
     pass
 
 class GetRelevantProductsRequest(BaseSearchRequest):
+    # V1 endpoint: /api/v1/products/{parentAsin}/relevant-products
     parent_asin: str = Field(..., alias="parentAsin")
     relevancy_score: Optional[RangeDecimal] = Field(None, alias="relevancyScore")
     common_search_terms: Optional[RangeInt] = Field(None, alias="commonSearchTerms")
 
 class GetSubcategoryBrandsRequest(BaseSearchRequest):
+    # V1 endpoint: /api/v1/subcategories/{subcategoryId}/brands
     brand_name: Optional[str] = Field(None, alias="brandName")
 
 class GetBrandSalesHistoryRequest(BaseHistoryRequest):
+    # V2 endpoint: /api/v2/brands/history/sales
     subcategory_id: Optional[int] = Field(None, alias="subcategoryId")
 
 class GetBrandSalesHistoryBySubcategoriesRequest(BaseHistoryRequest):
+    # V2 endpoint: /api/v2/brands/history/sales-by-subcategories
     brand_name: str = Field(..., alias="brandName")
     subcategory_id: Optional[int] = Field(None, alias="subcategoryId")
 
 class GetBrandScopeRequest(BaseHistoryRequest):
+    # V2 endpoint: /api/v2/brands/history/scope
     brand_name: str = Field(..., alias="brandName")
     subcategory_id: Optional[int] = Field(None, alias="subcategoryId")
 
 class GetBrandScopeTopProductsRequest(BaseHistoryRequest):
+    # V2 endpoint: /api/v2/brands/history/scope/top-products
     brand_name: str = Field(..., alias="brandName")
     top_by: str = Field(..., alias="topBy")
     top: int
     subcategory_id: Optional[int] = Field(None, alias="subcategoryId")
 
 class GetRelevantSearchTermsRequest(BaseSearchRequest):
+    # V1 endpoint: /api/v1/products/{parentAsin}/relevant-search-terms
     parent_asin: str = Field(..., alias="parentAsin")
     search_term: Optional[TextFilter] = Field(None, alias="searchTerm")
     intent: Optional[Intent] = None
@@ -147,6 +160,7 @@ class GetRelevantSearchTermsRequest(BaseSearchRequest):
     estimated_searches: Optional[RangeInt] = Field(None, alias="estimatedSearches")
 
 class GetSearchTermHistoryRequest(BaseHistoryRequest):
+    # V1 endpoint: /api/v1/search-terms/{searchTerm}/history
     search_term: str = Field(..., alias="searchTerm")
 
 # Add more request models as needed based on the API documentation and requirements
